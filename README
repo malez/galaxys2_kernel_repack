@@ -1,0 +1,11 @@
+Make sure to modify paths in repack.sh before you start.
+--------------------------------------------------------
+
+Extract:
+./unpack.sh zImageLP5 LP5
+
+Generate new Ramdisk:
+./gen_initramfs.sh -o ramdisk.gz -u 0 -g 0 ./LP5
+
+Repack it:
+./repack.sh zImageLP5 ramdisk.gz zImage

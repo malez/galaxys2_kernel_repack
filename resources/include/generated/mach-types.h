@@ -1,5 +1,5 @@
 /*
- * This was automagically generated from arch/arm/tools/mach-types!
+ * This was automagically generated from /android/ics/kernel/samsung/t1/arch/arm/tools/mach-types!
  * Do NOT edit
  */
 
@@ -1104,12 +1104,7 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_THALES_ADC           3492
 #define MACH_TYPE_UBISYS_P9D_EVP       3493
 #define MACH_TYPE_ATDGP318             3494
-#define MACH_TYPE_SMDK4212             3698
-#define MACH_TYPE_SMDK4412             3765
-#define MACH_TYPE_SLP_PQ               3766
-#define MACH_TYPE_SLP_PQ_LTE           3767
-#define MACH_TYPE_SMDK5210             3774
-#define MACH_TYPE_SMDK5250             3825
+#define MACH_TYPE_OMAP4_SAMSUNG        2160
 
 #ifdef CONFIG_ARCH_EBSA110
 # ifdef machine_arch_type
@@ -14215,76 +14210,16 @@ extern unsigned int __machine_arch_type;
 # define machine_is_atdgp318()	(0)
 #endif
 
-#ifdef CONFIG_MACH_SMDK4212
+#ifdef CONFIG_MACH_OMAP4_SAMSUNG
 # ifdef machine_arch_type
 #  undef machine_arch_type
 #  define machine_arch_type	__machine_arch_type
 # else
-#  define machine_arch_type	MACH_TYPE_SMDK4212
+#  define machine_arch_type	MACH_TYPE_OMAP4_SAMSUNG
 # endif
-# define machine_is_smdk4212()	(machine_arch_type == MACH_TYPE_SMDK4212)
+# define machine_is_t1()	(machine_arch_type == MACH_TYPE_OMAP4_SAMSUNG)
 #else
-# define machine_is_smdk4212()	(0)
-#endif
-
-#ifdef CONFIG_MACH_SMDK4412
-# ifdef machine_arch_type
-#  undef machine_arch_type
-#  define machine_arch_type	__machine_arch_type
-# else
-#  define machine_arch_type	MACH_TYPE_SMDK4412
-# endif
-# define machine_is_smdk4412()	(machine_arch_type == MACH_TYPE_SMDK4412)
-#else
-# define machine_is_smdk4412()	(0)
-#endif
-
-#ifdef CONFIG_MACH_SLP_PQ
-# ifdef machine_arch_type
-#  undef machine_arch_type
-#  define machine_arch_type	__machine_arch_type
-# else
-#  define machine_arch_type	MACH_TYPE_SLP_PQ
-# endif
-# define machine_is_slp_pq()	(machine_arch_type == MACH_TYPE_SLP_PQ)
-#else
-# define machine_is_slp_pq()	(0)
-#endif
-
-#ifdef CONFIG_MACH_SLP_PQ_LTE
-# ifdef machine_arch_type
-#  undef machine_arch_type
-#  define machine_arch_type	__machine_arch_type
-# else
-#  define machine_arch_type	MACH_TYPE_SLP_PQ_LTE
-# endif
-# define machine_is_slp_pq_lte()	(machine_arch_type == MACH_TYPE_SLP_PQ_LTE)
-#else
-# define machine_is_slp_pq_lte()	(0)
-#endif
-
-#ifdef CONFIG_MACH_SMDK5210
-# ifdef machine_arch_type
-#  undef machine_arch_type
-#  define machine_arch_type	__machine_arch_type
-# else
-#  define machine_arch_type	MACH_TYPE_SMDK5210
-# endif
-# define machine_is_smdk5210()	(machine_arch_type == MACH_TYPE_SMDK5210)
-#else
-# define machine_is_smdk5210()	(0)
-#endif
-
-#ifdef CONFIG_MACH_SMDK5250
-# ifdef machine_arch_type
-#  undef machine_arch_type
-#  define machine_arch_type	__machine_arch_type
-# else
-#  define machine_arch_type	MACH_TYPE_SMDK5250
-# endif
-# define machine_is_smdk5250()	(machine_arch_type == MACH_TYPE_SMDK5250)
-#else
-# define machine_is_smdk5250()	(0)
+# define machine_is_t1()	(0)
 #endif
 
 /*

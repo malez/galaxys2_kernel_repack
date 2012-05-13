@@ -1,14 +1,10 @@
 #!/bin/bash
 ##############################################################################
 # you should point where your cross-compiler is         
-COMPILER=/media/diskf/home/xiaolu/CyanogenGingerbread/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi
-COMPILER_LIB=/media/diskf/home/xiaolu/CyanogenGingerbread/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/lib/gcc/arm-eabi/4.4.3
-#COMPILER=/home/xiaolu/CodeSourcery/Sourcery_G++_Lite/bin/arm-none-eabi
-#COMPILER_LIB=/home/xiaolu/CodeSourcery/Sourcery_G++_Lite/lib/gcc/arm-none-eabi/4.5.2
-#COMPILER=/home/xiaolu/CodeSourcery/arm-2009q3/bin/arm-none-eabi
-#COMPILER_LIB=/home/xiaolu/CodeSourcery/arm-2009q3/lib/gcc/arm-none-eabi/4.4.1
+COMPILER=/android/ics/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi
+COMPILER_LIB=/android/ics/prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/lib/gcc/arm-eabi/4.4.3
 ##############################################################################
-#set -x
+set -x
 
 srcdir=`dirname $0`
 srcdir=`realpath -s $srcdir`
@@ -251,21 +247,14 @@ function mkbootoffset()
 	cat $tempdir/zImage512 $tempdir/BOOT_IMAGE_OFFSETS512 $boot512 $recovery512 > $1
 	#rm -rf $tempdir
 }
-MAKE_FIPS_BINARY()
-{
-	openssl dgst -sha256 -hmac 12345678 -binary -out \
-		$1.hmac $1
-	cat $1 $1.hmac > $1.digest
-	cp -f $1.digest $1
-	rm -f $1.digest $1.hmac
-}
+
 ###############################################################################
 #
 # code begins
 #
 ###############################################################################
 
-printhl "---------------------------kernel repacker for i9100---------------------------"
+printhl "---------------------------kernel repacker for i9100g---------------------------"
 
 if [ -z $1 ] || [ -z $2 ] || [ ! -f $1 ] || [ ! -e $2 ]; then
 	exit_usage
@@ -356,7 +345,7 @@ cp -f include/generated/autoconf.$compress_type.h include/generated/autoconf.h
 NOSTDINC_FLAGS="-nostdinc -isystem $COMPILER_LIB/include -Iarch/arm/include \
 		-Iarch/arm/include/generated -Iinclude  \
 		-include include/generated/autoconf.h -D__KERNEL__ -mlittle-endian \
-		-Iarch/arm/mach-exynos/include -Iarch/arm/plat-s5p/include -Iarch/arm/plat-samsung/include"
+		-Iarch/arm/mach-omap2/include -Iarch/arm/plat-omap/include"
 
 KBUILD_CFLAGS="-Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		-fno-strict-aliasing -fno-common \
@@ -400,7 +389,7 @@ $COMPILER-gcc -Wp,-MD,arch/arm/boot/compressed/.piggy.$compress_type.o.d  $NOSTD
 
 #3. head.o
 printhl "Compiling head.o"
-$COMPILER-gcc -Wp,-MD,arch/arm/boot/compressed/.head.o.d  $NOSTDINC_FLAGS -D__ASSEMBLY__ $CFLAGS_ABI  -include asm/unified.h -msoft-float -gdwarf-2    -Wa,-march=all  -DTEXT_OFFSET=0x00008000 -DFIPS_KERNEL_RAM_BASE=0x40008000   -c -o arch/arm/boot/compressed/head.o arch/arm/boot/compressed/head.S
+$COMPILER-gcc -Wp,-MD,arch/arm/boot/compressed/.head.o.d  $NOSTDINC_FLAGS -D__ASSEMBLY__ $CFLAGS_ABI  -include asm/unified.h -msoft-float -gdwarf-2    -Wa,-march=all  -DTEXT_OFFSET=0x00008000 -c -o arch/arm/boot/compressed/head.o arch/arm/boot/compressed/head.S
 
 #4. misc.o
 printhl "Compiling misc.o"
@@ -421,7 +410,7 @@ sed "s/TEXT_START/0/;s/BSS_START/ALIGN(8)/" < arch/arm/boot/compressed/vmlinux.l
 #8. head.o + misc.o + piggy.*.o --> vmlinux
 [ $llsl ] && ashldi3=" + ashldi3.o"
 printhl "head.o + misc.o + piggy.$compress_type.o + decompress.o + lib1funcs.o$ashldi3---> vmlinux"
-$COMPILER-ld -EL    --defsym zreladdr=0x40008000 -p --no-undefined -X -T arch/arm/boot/compressed/vmlinux.lds arch/arm/boot/compressed/head.o arch/arm/boot/compressed/piggy.$compress_type.o arch/arm/boot/compressed/misc.o arch/arm/boot/compressed/decompress.o arch/arm/boot/compressed/lib1funcs.o $llsl -o arch/arm/boot/compressed/vmlinux
+$COMPILER-ld -EL    --defsym zreladdr=0x80008000 -p --no-undefined -X -T arch/arm/boot/compressed/vmlinux.lds arch/arm/boot/compressed/head.o arch/arm/boot/compressed/piggy.$compress_type.o arch/arm/boot/compressed/misc.o arch/arm/boot/compressed/decompress.o arch/arm/boot/compressed/lib1funcs.o $llsl -o arch/arm/boot/compressed/vmlinux
 
 #9. vmlinux -> zImage
 printhl "vmlinux ---> zImage"
@@ -429,12 +418,6 @@ $COMPILER-objcopy -O binary -R .comment -S  arch/arm/boot/compressed/vmlinux arc
 
 newzImagesize=$(stat -c "%s" arch/arm/boot/zImage)
 printhl "Compiled new zImage size:$newzImagesize"
-
-#MAKE_FIPS
-MAKE_FIPS_BINARY arch/arm/boot/zImage
-
-newzImagesize=$(stat -c "%s" arch/arm/boot/zImage)
-printhl "MAKE_FIPS new zImage size:$newzImagesize"
 
 new_zImage_name="new_zImage"
 [ $3 ] && new_zImage_name=$3
